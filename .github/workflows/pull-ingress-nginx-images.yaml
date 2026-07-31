@@ -1,0 +1,31 @@
+name: Pull ingress-nginx images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull-and-save:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Pull ingress-nginx images
+      run: |
+        docker pull registry.k8s.io/ingress-nginx/controller:v1.15.1
+        docker pull registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.1
+
+    - name: Save images as tar
+      run: |
+        docker save \
+          registry.k8s.io/ingress-nginx/controller:v1.15.1 \
+          registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.1 \
+          -o ingress-nginx-images.tar
+
+    - name: Compress tar
+      run: |
+        gzip ingress-nginx-images.tar
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ingress-nginx-images
+        path: ingress-nginx-images.tar.gz
