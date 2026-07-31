@@ -1,0 +1,32 @@
+name: Download Ingress NGINX Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull image
+        run: |
+          docker pull --platform linux/amd64 \
+            registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.9
+
+      - name: Save and compress image
+        run: |
+          docker save \
+            registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.9 \
+            | gzip > kube-webhook-certgen-v1.6.9.tar.gz
+
+          sha256sum kube-webhook-certgen-v1.6.9.tar.gz \
+            > kube-webhook-certgen-v1.6.9.sha256
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kube-webhook-certgen-v1.6.9
+          path: |
+            kube-webhook-certgen-v1.6.9.tar.gz
+            kube-webhook-certgen-v1.6.9.sha256
+          retention-days: 7
