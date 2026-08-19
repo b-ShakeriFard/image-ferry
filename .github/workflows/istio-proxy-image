@@ -1,4 +1,4 @@
-name: Download Istio Images
+name: Download Istio proxy Images
 
 on:
   workflow_dispatch:
@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pull Istio pilot image
+      - name: Pull Istio proxy image
         run: |
           docker pull registry.istio.io/release/proxyv2:1.30.3
 
-      - name: Save pilot image
+      - name: Save proxy image
         run: |
           docker save \
             registry.istio.io/release/proxyv2:1.30.3 \
