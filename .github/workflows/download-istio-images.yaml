@@ -1,0 +1,26 @@
+name: Download Istio Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull Istio pilot image
+        run: |
+          docker pull registry.istio.io/release/pilot:1.30.3
+
+      - name: Save pilot image
+        run: |
+          docker save \
+            registry.istio.io/release/pilot:1.30.3 \
+            -o istio-pilot-1.30.3.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: istio-pilot-1.30.3
+          path: istio-pilot-1.30.3.tar
+          compression-level: 0
